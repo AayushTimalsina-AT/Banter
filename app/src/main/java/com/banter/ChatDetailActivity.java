@@ -89,6 +89,9 @@ public class ChatDetailActivity extends AppCompatActivity {
                             }
                         }
                         chatAdapter.notifyDataSetChanged();
+                        if (messages.size() > 0) {
+                            binding.chatRecyclerView.scrollToPosition(messages.size() - 1);
+                        }
                     }
 
                     @Override
