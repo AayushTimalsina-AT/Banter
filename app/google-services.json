@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "632222594826",
+    "project_id": "banter-69",
+    "storage_bucket": "banter-69.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632222594826:android:2e560ed1a7ac581905acf3",
+        "android_client_info": {
+          "package_name": "com.banter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "632222594826-f6nvc62gpenorkf0lesrbirs3d6nvt4v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxHGVK_QlAndA12dUUCoEHhcg8ubgKHI8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "632222594826-f6nvc62gpenorkf0lesrbirs3d6nvt4v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

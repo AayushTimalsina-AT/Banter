@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Banter</string>
+    <string name="username">UserName</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="alreadyHaveAccount">Already Have Account ?</string>
+    <string name="clickForSignup">Click For Sign Up</string>
+    <string name="signup">Sign Up</string>
+    <string name="signIn">Sign In</string>
+    <string name="google">Google</string>
+    <string name="facebook">Facebook</string>
+    <string name="setting">Setting</string>
+    <string name="logout">Logout</string>
+    <string name="wlc">Welcome To the Banter.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="update">Update</string>
+    <string name="upload">Upload</string>
+    <string name="otherLogin">Other Login Options</string>
+
+
+</resources>
