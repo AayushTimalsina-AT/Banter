@@ -8,7 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#CFCFCF</color>
-    <color name="light_purple">#27A9E0</color>
+    <color name="colorPrimary">#27A9E0</color>
     <color name="menu">#076E9A</color>
     <color name="hintColor">#9B9FA1</color>
 

@@ -52,4 +52,7 @@ public class Messages {
         this.timestamp = timestamp;
     }
 
+
+    public void remove(int position) {
+    }
 }

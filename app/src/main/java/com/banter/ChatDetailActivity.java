@@ -4,7 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +18,7 @@ import com.banter.Models.Messages;
 import com.banter.Utils.EncryptDecryptHelper;
 import com.banter.Utils.GsonUtils;
 import com.banter.databinding.ActivityChatDetailBinding;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +34,7 @@ public class ChatDetailActivity extends AppCompatActivity {
     ActivityChatDetailBinding binding;
     FirebaseDatabase database;
     FirebaseAuth auth;
+
     EncryptDecryptHelper encryptDecryptHelper = new EncryptDecryptHelper();
 
 
@@ -38,6 +43,9 @@ public class ChatDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityChatDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+
+
 
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -83,7 +91,10 @@ public class ChatDetailActivity extends AppCompatActivity {
                                 String decryptedData = encryptDecryptHelper.decrypt(encryptedData);
                                 // Convert the decrypted JSON data to MessageModel object
                                 Messages model = GsonUtils.convertFromJson(decryptedData, Messages.class);
+                                model.setMessageId(snapshot1.getKey());
                                 messages.add(model);
+//                                 model;
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -156,7 +167,71 @@ public class ChatDetailActivity extends AppCompatActivity {
                 // Not needed in this case
             }
         });
+        binding.menuChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPopupMenu(view);
+            }
+        });
+    }
+    private void showPopupMenu(View view) {
+        PopupMenu popupMenu = new PopupMenu(ChatDetailActivity.this, view);
+        popupMenu.inflate(R.menu.chat_menu); // The menu resource file for the popup menu
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                // Handle menu item clicks here
+                int id = item.getItemId();
+                if (id == R.id.Delete) {
+                    deleteAllChats();
+                    return true;
+
+                } else {
+                    return false;
+                }
+            }
+        });
+        popupMenu.show();
     }
 
+    private void deleteAllChats() {
+        final String senderId = auth.getUid();
+        String receiveId = getIntent().getStringExtra("userId");
+        final String senderRoom = senderId + receiveId;
+        final String receiverRoom = receiveId + senderId;
+
+        // Delete messages from sender's room
+        database.getReference().child("Chats")
+                .child(senderRoom)
+                .removeValue()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Messages deleted from sender's room, now delete messages from receiver's room
+                        database.getReference().child("Chats")
+                                .child(receiverRoom)
+                                .removeValue()
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        // Chats deleted successfully
+                                        Toast.makeText(ChatDetailActivity.this, "All Chat Deleted", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        // Handle the failure to delete messages from receiver's room
+                                    }
+                                });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle the failure to delete messages from sender's room
+                    }
+                });
+    }
 
 }

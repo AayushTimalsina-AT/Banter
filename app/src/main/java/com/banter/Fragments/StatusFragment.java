@@ -2,28 +2,18 @@ package com.banter.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-
 import com.banter.Adapters.StatusAdapter;
 import com.banter.Models.Status;
-import com.banter.Models.Users;
-import com.banter.R;
-import com.banter.SettingActivity;
-import com.banter.SignInActivity;
-import com.banter.SignUpActivity;
 import com.banter.StatusDetailActivity;
-import com.banter.databinding.FragmentChatBinding;
 import com.banter.databinding.FragmentStatusBinding;
-import com.banter.profileActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,7 +21,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class StatusFragment extends Fragment {
     FragmentStatusBinding binding;
@@ -63,13 +52,14 @@ public class StatusFragment extends Fragment {
                         if (snapshot.exists()) {
                             statusList.clear();
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+//                                Log.d("STATS-KEY", dataSnapshot.getKey());
                                 Status sPost = dataSnapshot.getValue(Status.class);
+                                sPost.setStatusId(dataSnapshot.getKey());
                                 statusList.add(sPost);
 
                             }
+                            sAdapter.notifyDataSetChanged();
                         }
-
-                      sAdapter.notifyDataSetChanged();
             }
 
             @Override

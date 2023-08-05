@@ -3,6 +3,7 @@ package com.banter.Models;
 public class Users {
     String ProfilePic ,UserName,Email ,Password,UserId,LastMessage,about;
 
+
     public Users(String profilePic, String userName, String email, String password, String userId, String lastMessage) {
         ProfilePic = profilePic;
         UserName = userName;

@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,15 +29,17 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> implements Filterable {
 
     ArrayList<Users> List;
+    private ArrayList<Users> userListFull;
     Context context;
     EncryptDecryptHelper encryptDecryptHelper = new EncryptDecryptHelper();
 
     public UserAdapter(ArrayList<Users> list, Context context) {
-        List = list;
+        this.List = list;
         this.context = context;
+        this.userListFull = new ArrayList<>(list); // Copy the original list
     }
 
     @NonNull
@@ -53,39 +57,36 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         holder.userName.setText(users.getUserName());
 
 
-        FirebaseDatabase.getInstance().getReference().child("Chats")
-                .child(FirebaseAuth.getInstance().getUid() + users.getUserId())
+        FirebaseDatabase.getInstance().getReference().child("Chats").
+                child(FirebaseAuth.getInstance().getUid() + users.getUserId())
                 .orderByChild("timestamp")
                 .limitToLast(1)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.hasChildren()) {
-                            for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                                String encryptedData = snapshot1.getValue(String.class);
-                                try {
-                                    // Decrypt the encrypted data
-                                    String decryptedData = encryptDecryptHelper.decrypt(encryptedData);
-                                    // Convert the decrypted JSON data to MessageModel object
-                                    Messages model = GsonUtils.convertFromJson(decryptedData, Messages.class);
-                                    holder.lastMessage.setText(model.getMessage());
-                                    holder.time.setText(TimeAgo.using(model.getTimestamp()));
-
-
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-
-                            }
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.hasChildren()) {
+                    for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                        String encryptedData = snapshot1.getValue(String.class);
+                        try {
+                            // Decrypt the encrypted data
+                            String decryptedData = encryptDecryptHelper.decrypt(encryptedData);
+                            // Convert the decrypted JSON data to MessageModel object
+                            Messages model = GsonUtils.convertFromJson(decryptedData, Messages.class);
+                            holder.lastMessage.setText(model.getMessage());
+                            holder.time.setText(TimeAgo.using(model.getTimestamp()));
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    }
-
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
 
                     }
-                });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +107,41 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         return List.size();
     }
 
+    @Override
+    public  Filter getFilter() {
+        return null;
+    }
+     Filter userFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            ArrayList<Users> filteredList = new ArrayList<>();
+
+            if (constraint == null || constraint.length() == 0) {
+                // If the search query is empty, show the original list
+                filteredList.addAll(userListFull);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                for (Users user : userListFull) {
+                    if (user.getUserName().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(user);
+                    }
+                }
+            }
+
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            List.clear();
+            List.addAll((ArrayList<Users>) results.values);
+            notifyDataSetChanged();
+        }
+    };
+
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView profile;
@@ -116,7 +152,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             profile = itemView.findViewById(R.id.profile_image);
             userName = itemView.findViewById(R.id.userName);
             lastMessage = itemView.findViewById(R.id.lastMessage);
-            time =itemView.findViewById(R.id.time);
+            time = itemView.findViewById(R.id.time);
         }
     }
 }

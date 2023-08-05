@@ -1,6 +1,10 @@
 package com.banter.Adapters;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.banter.Models.Status;
 import com.banter.R;
-import com.banter.Models.Users;
 import com.github.marlonlom.utilities.timeago.TimeAgo;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -36,8 +41,49 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.viewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull viewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull viewHolder holder, @SuppressLint("RecyclerView") int position) {
         Status status = statusList.get(position);
+
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                new AlertDialog.Builder(context)
+                        .setTitle("Delete")
+                        .setMessage("Are you sure you want to permanently delete the selected message?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                DatabaseReference messageRef = database.getReference()
+                                        .child("Status")
+                                        .child(status.getStatusId());
+                                Log.d("STATUSID", status.getStatusId());
+                                    messageRef.removeValue()
+                                        .addOnSuccessListener(aVoid -> {
+                                            // Message deletion successful
+                                            Log.d("MessageDeleted", "Status deleted successfully");
+                                            statusList.remove(position); // Remove the message from the list
+                                            notifyItemRemoved(position);
+//
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            // Handle any errors that occurred during deletion
+                                            Log.e("MessageDeletionError", "Error deleting message: " + e.getMessage());
+                                        });
+                            }
+
+
+                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
+                return false;
+            }
+        });
+
+
         Picasso.get().load(status.getProfilePic()).placeholder(R.drawable.man).into(holder.profilePic);
         holder.userName.setText(status.getUserName());
         holder.status.setText(status.getStatus());

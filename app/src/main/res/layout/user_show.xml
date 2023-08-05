@@ -7,17 +7,17 @@
 
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profile_image"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:layout_marginLeft="5dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="5dp"
         android:padding="5dp"
         android:src="@drawable/man"
         app:civ_border_color="#FF000000"
         app:civ_border_width="2dp" />
 
     <LinearLayout
-        android:layout_width="200dp"
-        android:layout_height="96dp"
+        android:layout_width="160dp"
+        android:layout_height="75dp"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -25,28 +25,33 @@
             android:id="@+id/userName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="5dp"
+            android:paddingVertical="1dp"
+            android:singleLine="true"
             android:text="@string/username"
+            android:textColor="#000000"
             android:textSize="18sp"
+
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/lastMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Last Message"
             android:paddingVertical="2dp"
-            />
+            android:singleLine="true"
+            android:textColor="#000000" />
     </LinearLayout>
+
     <TextView
         android:id="@+id/time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="15dp"
-        android:textAlignment="textEnd"
-        android:text=" 5 hours Ago"
         android:paddingVertical="2dp"
+        android:textAlignment="textEnd"
+        android:textColor="#000000"
         tools:ignore="RtlCompat" />
 
 </LinearLayout>

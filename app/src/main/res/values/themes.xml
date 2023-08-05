@@ -2,7 +2,9 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Banter" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-         <item name="colorPrimary">@color/light_purple</item>
+         <item name="colorPrimary">@color/menu</item>
+         <item name="colorPrimaryVariant">@color/menu</item>
+
 
     </style>
 

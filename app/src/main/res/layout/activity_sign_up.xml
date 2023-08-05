@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_purple"
+    android:background="@color/colorPrimary"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".SignUpActivity">
@@ -37,7 +37,9 @@
             android:ems="10"
             android:hint="@string/username"
             android:inputType="textPersonName"
-            android:padding="15dp" />
+            android:padding="15dp"
+            android:textColor="@color/black"
+            android:textColorHint="#000000" />
 
         <EditText
             android:id="@+id/etEmail"
@@ -48,7 +50,9 @@
             android:ems="10"
             android:hint="@string/email"
             android:inputType="textEmailAddress"
-            android:padding="15dp" />
+            android:padding="15dp"
+            android:textColor="#000000"
+            android:textColorHint="#000000" />
 
         <EditText
             android:id="@+id/etPassword"
@@ -58,7 +62,9 @@
             android:ems="10"
             android:hint="@string/password"
             android:inputType="textPassword"
-            android:padding="15dp" />
+            android:padding="15dp"
+            android:textColor="#000000"
+            android:textColorHint="#000000" />
 
         <TextView
             android:id="@+id/tvAlreadyAccount"
@@ -68,6 +74,7 @@
             android:layout_marginTop="15dp"
             android:gravity="end"
             android:text="@string/alreadyHaveAccount"
+            android:textColor="#000000"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -79,7 +86,7 @@
             android:background="@drawable/bg_text"
             android:padding="15dp"
             android:text="@string/signup"
-            android:textColor="@color/light_purple"
+            android:textColor="@color/black"
             android:textSize="18sp"
             app:backgroundTint="@color/white" />
 
@@ -90,6 +97,7 @@
             android:layout_marginTop="25dp"
             android:gravity="end"
             android:text="@string/otherLogin"
+            android:textColor="#000000"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -106,7 +114,7 @@
                 android:layout_gravity="center"
                 android:padding="15dp"
                 android:src="@drawable/google"
-                app:backgroundTint="@color/light_purple"
+                app:backgroundTint="@color/colorPrimary"
                 app:cornerRadius="4dp" />
 
         </LinearLayout>

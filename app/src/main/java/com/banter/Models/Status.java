@@ -10,13 +10,13 @@ public class Status {
         this.timestamp = timestamp;
     }
 
-//    public Status(String profilePic, String userName, String status, String statusId, Long timestamp) {
-//       this.ProfilePic = profilePic;
-//        this.userName = userName;
-//        this.status = status;
-//        this.statusId = statusId;
-//        this.timestamp = timestamp;
-//    }
+    public Status(String profilePic, String userName, String status, String statusId, Long timestamp) {
+       this.ProfilePic = profilePic;
+        this.userName = userName;
+        this.status = status;
+        this.statusId = statusId;
+        this.timestamp = timestamp;
+    }
 
 
 

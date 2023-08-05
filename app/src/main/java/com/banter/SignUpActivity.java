@@ -1,15 +1,15 @@
 package com.banter;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.banter.Models.Users;
 import com.banter.databinding.ActivitySignUpBinding;
@@ -26,6 +26,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
     ActivitySignUpBinding binding;
@@ -49,12 +51,24 @@ public class SignUpActivity extends AppCompatActivity {
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-
         googleSignInClient = GoogleSignIn.getClient(this,options);
 
         binding.btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if(binding.etUserName.getText().toString().isEmpty()){
+                    binding.etPassword.setError("Enter Your UserName");
+                    return;
+                }
+                if(binding.etEmail.getText().toString().isEmpty()){
+                    binding.etEmail.setError("Enter Your Email");
+                    return;
+                }
+                if(binding.etPassword.getText().toString().isEmpty()){
+                    binding.etPassword.setError("Enter Your Password");
+                    return;
+                }
                 progressDialog.show();
                 auth.createUserWithEmailAndPassword(binding.etEmail.getText().toString(), binding.etPassword.getText().toString()).
                         addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -64,7 +78,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 if(task.isSuccessful()){
                                     Users user= new Users(binding.etUserName.getText().toString(),binding.etEmail.getText().toString(),
                                             binding.etPassword.getText().toString());
-                                    String id=task.getResult().getUser().getUid();
+                                    String id= Objects.requireNonNull(task.getResult().getUser()).getUid();
                                     database.getReference().child("Users").child(id).setValue(user);
                                     Toast.makeText(SignUpActivity.this, "User Create Successfully", Toast.LENGTH_SHORT).show();
                                     Intent intent= new Intent(SignUpActivity.this, MainActivity.class);

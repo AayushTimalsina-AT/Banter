@@ -21,6 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginBottom="15dp"
         android:layout_alignParentBottom="true"
         >
 
@@ -29,14 +30,16 @@
             android:id="@+id/btMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
             android:layout_weight="1"
             android:background="@drawable/edit_background"
             android:ems="10"
             android:hint="Banter Message"
             android:inputType="text"
             android:padding="15dp"
-            android:layout_marginStart="5dp"
-            />
+
+            android:textColor="#000000"
+            android:textColorHint="#000000" />
 
         <ImageView
             android:id="@+id/send"
@@ -48,7 +51,7 @@
 
     </LinearLayout>
 
-    <Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -90,6 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:text="User Name"
+                android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -97,30 +101,30 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.5" />
 
-            <ImageView
-                android:id="@+id/voiceCall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageView7"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5"
-                app:srcCompat="@drawable/call" />
+<!--            <ImageView-->
+<!--                android:id="@+id/voiceCall"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginEnd="15dp"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintEnd_toStartOf="@+id/imageView7"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                app:layout_constraintVertical_bias="0.5"-->
+<!--                app:srcCompat="@drawable/call" />-->
+
+<!--            <ImageView-->
+<!--                android:id="@+id/imageView7"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginEnd="15dp"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintEnd_toStartOf="@+id/imageView8"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                app:layout_constraintVertical_bias="0.5"-->
+<!--                app:srcCompat="@drawable/video_call" />-->
 
             <ImageView
-                android:id="@+id/imageView7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageView8"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5"
-                app:srcCompat="@drawable/video_call" />
-
-            <ImageView
-                android:id="@+id/imageView8"
+                android:id="@+id/menuChat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="15dp"
@@ -137,5 +141,5 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_end="375dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 </RelativeLayout>

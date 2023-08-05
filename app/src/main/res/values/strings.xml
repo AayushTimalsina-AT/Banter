@@ -11,12 +11,14 @@
     <string name="facebook">Facebook</string>
     <string name="setting">Setting</string>
     <string name="logout">Logout</string>
+    <string name="search">Search</string>
     <string name="wlc">Welcome To the Banter.</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="update">Update</string>
     <string name="upload">Upload</string>
     <string name="otherLogin">Other Login Options</string>
+    <string name="deleteChat">Delete Conversation</string>
 
 
 </resources>

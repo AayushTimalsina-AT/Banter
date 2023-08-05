@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_purple"
+    android:background="@color/colorPrimary"
     tools:context=".SettingActivity">
 
     <ImageView
@@ -23,12 +23,12 @@
             android:layout_marginHorizontal="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/light_purple"
+            android:background="@color/colorPrimary"
             android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/profile"
-                android:layout_width="380dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="30dp"
                 android:background="@drawable/btn_background"
@@ -65,7 +65,7 @@
 
             <LinearLayout
                 android:id="@+id/privacy"
-                android:layout_width="380dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="30dp"
                 android:background="@drawable/btn_background"
@@ -99,7 +99,7 @@
 
             <LinearLayout
                 android:id="@+id/about"
-                android:layout_width="380dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="30dp"
                 android:background="@drawable/btn_background"
@@ -135,7 +135,7 @@
 
             <LinearLayout
                 android:id="@+id/help"
-                android:layout_width="380dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="30dp"
                 android:background="@drawable/btn_background"
@@ -168,10 +168,9 @@
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
-
             <LinearLayout
-                android:id="@+id/notification"
-                android:layout_width="380dp"
+                android:id="@+id/inviteFriend"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="30dp"
                 android:background="@drawable/btn_background"
@@ -179,40 +178,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/help">
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="10dp"
-                    android:src="@drawable/notification" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginHorizontal="10dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Notification"
-                        android:textColor="@color/black"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/inviteFriend"
-                android:layout_width="380dp"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="30dp"
-                android:background="@drawable/btn_background"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/notification">
 
                 <ImageView
                     android:layout_width="50dp"
@@ -232,6 +197,40 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Invite a Friend"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/deleteUser"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="30dp"
+                android:background="@drawable/btn_background"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/inviteFriend">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/delete" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Delete Account"
                         android:textColor="@color/black"
                         android:textSize="20sp"
                         android:textStyle="bold" />

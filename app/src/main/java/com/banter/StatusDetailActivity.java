@@ -1,38 +1,35 @@
 package com.banter;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+
 import com.banter.Models.Status;
 import com.banter.Models.Users;
+import com.banter.Utils.StatusDeleteWorker;
 import com.banter.databinding.ActivityStatusDetailBinding;
-import com.github.marlonlom.utilities.timeago.TimeAgo;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 
-import java.util.Date;
 import java.util.Objects;
-import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class StatusDetailActivity extends AppCompatActivity {
     ActivityStatusDetailBinding binding;
     FirebaseAuth auth;
     FirebaseDatabase database;
     String username, profileImage;
-        @Override
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityStatusDetailBinding.inflate(getLayoutInflater());
@@ -43,12 +40,11 @@ public class StatusDetailActivity extends AppCompatActivity {
         binding.backArrowId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(StatusDetailActivity.this, MainActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
 
-        //Fetching User Detail  from data base
+        // Fetching User Detail from the database
         database.getReference()
                 .child("Users")
                 .child(Objects.requireNonNull(auth.getUid()))
@@ -58,11 +54,10 @@ public class StatusDetailActivity extends AppCompatActivity {
                         if (snapshot.exists()) {
                             Users users = snapshot.getValue(Users.class);
                             if (users != null) {
-//
-                                if ( users.getProfilePic() != null && !users.getProfilePic().trim().isEmpty()  ) {
+                                if (users.getProfilePic() != null && !users.getProfilePic().trim().isEmpty()) {
                                     profileImage = users.getProfilePic();
                                 } else {
-
+                                    // Set a default profile image if not available
                                 }
                                 username = users.getUserName();
                             }
@@ -81,15 +76,25 @@ public class StatusDetailActivity extends AppCompatActivity {
         binding.btnStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 String statusText = binding.editTextStatus.getText().toString();
                 long timeInMillis = System.currentTimeMillis();
-                Status status = new Status( profileImage,username, statusText,timeInMillis);
+                Status status = new Status(profileImage, username, statusText, timeInMillis);
                 database.getReference().child("Status").push().setValue(status); // Set the status object instead of status1
                 Toast.makeText(StatusDetailActivity.this, "Status Upload Successfully", Toast.LENGTH_SHORT).show();
-
+                finish();
             }
         });
+
+        // Schedule the periodic task to delete old statuses
+//        scheduleStatusDeletionTask();
     }
 
+    private void scheduleStatusDeletionTask() {
+        // Schedule the task to run every 24 hours
+        PeriodicWorkRequest workRequest =
+                new PeriodicWorkRequest.Builder(StatusDeleteWorker.class, 24, TimeUnit.HOURS)
+                        .build();
+
+        WorkManager.getInstance(this).enqueue(workRequest);
+    }
 }
