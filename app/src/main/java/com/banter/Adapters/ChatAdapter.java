@@ -5,9 +5,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -50,13 +53,34 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Messages messages = this.messages.get(position);
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View view) {
+            public void onClick(View view) {
+                showPopupMenu(view);
+
+            }
+
+            private void showPopupMenu(View view) {
+                PopupMenu popupMenu = new PopupMenu(context.getApplicationContext(),view, Gravity.RIGHT);
+                popupMenu.inflate(R.menu.chat_choose);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        int id = menuItem.getItemId();
+                        if (id == R.id.remove) {
+                            RemoveChat();
+                            return true;
+                        }
+                        return false ;
+                    }
+                });
+                popupMenu.show();
+            }
+            private void RemoveChat() {
                 new AlertDialog.Builder(context)
-                        .setTitle("Delete")
-                        .setMessage("Are you sure you want to permanently delete the selected message?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        .setTitle("Remove For You?")
+                        .setMessage("This Message will be removed for you. Other chat still be able to see it.")
+                        .setPositiveButton("Remove", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                                 String sender = FirebaseAuth.getInstance().getUid() + receiverId;
@@ -64,26 +88,24 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                         .child("Chats")
                                         .child(sender)
                                         .child(messages.getMessageId());
-
-                                       messageRef.removeValue()
+                                messageRef.removeValue()
                                         .addOnSuccessListener(aVoid -> {
                                             // Message deletion successful
                                             Log.d("MessageDeleted", "Message deleted successfully");
                                             messages.remove(position); // Remove the message from the list
                                             notifyItemRemoved(position);
-                                            })
+                                        })
                                         .addOnFailureListener(e -> {
                                             // Handle any errors that occurred during deletion
                                             Log.e("MessageDeletionError", "Error deleting message: " + e.getMessage());
                                         });
                             }
-                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
                             }
                         }).show();
-                return false;
             }
         });
 

@@ -1,26 +1,34 @@
 package com.banter.Models;
 
 public class Status {
-    String ProfilePic, userName , status, statusId;
+    String ProfilePic, userName , status, statusId, userId;
     Long timestamp;
-    public Status(String profilePic, String userName, String status, Long timestamp) {
+    public Status(String profilePic, String userName, String userId,String status, Long timestamp) {
         this.ProfilePic = profilePic;
         this.userName = userName;
+        this.userId = userId;
         this.status = status;
         this.timestamp = timestamp;
     }
 
-    public Status(String profilePic, String userName, String status, String statusId, Long timestamp) {
+    public Status(String profilePic, String userName, String status, String statusId,String userId, Long timestamp) {
        this.ProfilePic = profilePic;
         this.userName = userName;
+        this.userId = userId;
         this.status = status;
         this.statusId = statusId;
         this.timestamp = timestamp;
+        this.userId = userId;
     }
 
 
+    public String getUserId() {
+        return userId;
+    }
 
-
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public Status(){}
 

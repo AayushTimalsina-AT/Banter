@@ -1,5 +1,6 @@
 package com.banter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -7,7 +8,6 @@ import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,12 +28,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class ChatDetailActivity extends AppCompatActivity {
     ActivityChatDetailBinding binding;
     FirebaseDatabase database;
     FirebaseAuth auth;
+    Context context;
 
     EncryptDecryptHelper encryptDecryptHelper = new EncryptDecryptHelper();
 
@@ -43,8 +43,6 @@ public class ChatDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityChatDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-
 
 
         database = FirebaseDatabase.getInstance();
@@ -64,6 +62,7 @@ public class ChatDetailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(ChatDetailActivity.this, MainActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -116,30 +115,31 @@ public class ChatDetailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String message = binding.btMessage.getText().toString();
                 final Messages model = new Messages(senderId, message);
-                model.setTimestamp(new Date().getTime());
+                model.setTimestamp(System.currentTimeMillis());
                 binding.btMessage.setText("");
-
                 // Encryption
                 try {
                     // Convert the model object to JSON
                     String modelJson = GsonUtils.convertToJson(model);
                     // Encrypt the model data
                     String encryptedData = encryptDecryptHelper.encrypt(modelJson);
-
                     // Message store in Database
-                    database.getReference().child("Chats").child(senderRoom)
+                    database.getReference().child("Chats")
+                            .child(senderRoom)
                             .push()
                             .setValue(encryptedData)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
-                                    database.getReference().child("Chats").child(receiverRoom)
+                                    database.getReference().child("Chats")
+                                            .child(receiverRoom)
                                             .push()
                                             .setValue(encryptedData)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void unused) {
                                                     // Data sent successfully
+//                                                    updateRecentChat( senderRoom,receiverRoom,senderId,model);
                                                 }
                                             });
                                 }
@@ -174,6 +174,7 @@ public class ChatDetailActivity extends AppCompatActivity {
             }
         });
     }
+
     private void showPopupMenu(View view) {
         PopupMenu popupMenu = new PopupMenu(ChatDetailActivity.this, view);
         popupMenu.inflate(R.menu.chat_menu); // The menu resource file for the popup menu
@@ -208,22 +209,9 @@ public class ChatDetailActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void aVoid) {
                         // Messages deleted from sender's room, now delete messages from receiver's room
-                        database.getReference().child("Chats")
-                                .child(receiverRoom)
-                                .removeValue()
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        // Chats deleted successfully
-                                        Toast.makeText(ChatDetailActivity.this, "All Chat Deleted", Toast.LENGTH_SHORT).show();
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        // Handle the failure to delete messages from receiver's room
-                                    }
-                                });
+                        Intent intetn = new Intent(ChatDetailActivity.this, MainActivity.class);
+                        startActivity(intetn);
+                        finish();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -232,6 +220,35 @@ public class ChatDetailActivity extends AppCompatActivity {
                         // Handle the failure to delete messages from sender's room
                     }
                 });
+
     }
+//    private void updateRecentChat(String senderRoom, String receiverRoom, String senderId, Messages model){
+//
+//        // Encryption
+//        try {
+//
+//            // Message store in Database
+//            database.getReference().child("RecentChat")
+//                    .child(senderRoom)
+//                    .setValue(model)
+//                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                        @Override
+//                        public void onSuccess(Void unused) {
+//                            database.getReference().child("RecentChat")
+//                                    .child(receiverRoom)
+//                                    .setValue(model)
+//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                        @Override
+//                                        public void onSuccess(Void unused) {
+//                                            // Data sent successfully
+//                                        }
+//                                    });
+//                        }
+//                    });
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 
 }

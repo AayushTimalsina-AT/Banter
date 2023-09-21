@@ -1,3 +1,4 @@
+
 package com.banter.Adapters;
 
 import android.content.Context;
@@ -32,8 +33,9 @@ import java.util.ArrayList;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> implements Filterable {
 
     ArrayList<Users> List;
-    private ArrayList<Users> userListFull;
+    private final ArrayList<Users> userListFull;
     Context context;
+    Users var;
     EncryptDecryptHelper encryptDecryptHelper = new EncryptDecryptHelper();
 
     public UserAdapter(ArrayList<Users> list, Context context) {
@@ -62,31 +64,32 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> im
                 .orderByChild("timestamp")
                 .limitToLast(1)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.hasChildren()) {
-                    for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                        String encryptedData = snapshot1.getValue(String.class);
-                        try {
-                            // Decrypt the encrypted data
-                            String decryptedData = encryptDecryptHelper.decrypt(encryptedData);
-                            // Convert the decrypted JSON data to MessageModel object
-                            Messages model = GsonUtils.convertFromJson(decryptedData, Messages.class);
-                            holder.lastMessage.setText(model.getMessage());
-                            holder.time.setText(TimeAgo.using(model.getTimestamp()));
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.hasChildren()) {
+                            for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                                String encryptedData = snapshot1.getValue(String.class);
+                                try {
+                                    // Decrypt the encrypted data
+                                    String decryptedData = encryptDecryptHelper.decrypt(encryptedData);
+                                    // Convert the decrypted JSON data to MessageModel object
+                                    Messages model = GsonUtils.convertFromJson(decryptedData, Messages.class);
+                                    holder.lastMessage.setText(model.getMessage());
+                                    holder.time.setText(TimeAgo.using(model.getTimestamp()));
+
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
                         }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
                     }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+                });
 
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -99,9 +102,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> im
                 context.startActivity(intent);
             }
         });
-
     }
-
     @Override
     public int getItemCount() {
         return List.size();
@@ -109,21 +110,23 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> im
 
     @Override
     public  Filter getFilter() {
-        return null;
+        return userFilter;
     }
-     Filter userFilter = new Filter() {
+    Filter userFilter = new Filter() {
         @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
+        protected FilterResults performFiltering(CharSequence keyword) {
             ArrayList<Users> filteredList = new ArrayList<>();
 
-            if (constraint == null || constraint.length() == 0) {
+            if (keyword.toString().isEmpty()) {
                 // If the search query is empty, show the original list
                 filteredList.addAll(userListFull);
+
             } else {
-                String filterPattern = constraint.toString().toLowerCase().trim();
-                for (Users user : userListFull) {
-                    if (user.getUserName().toLowerCase().contains(filterPattern)) {
-                        filteredList.add(user);
+                for (Users sUser : userListFull) {
+                    if (sUser.getUserName().toString().toLowerCase().contains(keyword.toString().toLowerCase())) {
+
+                        filteredList.add(sUser);
+
                     }
                 }
             }
@@ -132,7 +135,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> im
             results.values = filteredList;
             return results;
         }
-
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             List.clear();
@@ -140,9 +142,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> im
             notifyDataSetChanged();
         }
     };
-
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public  class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView profile;
         TextView userName, lastMessage, time;

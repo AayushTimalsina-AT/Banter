@@ -19,6 +19,8 @@
     <string name="upload">Upload</string>
     <string name="otherLogin">Other Login Options</string>
     <string name="deleteChat">Delete Conversation</string>
+    <string name="unsend">Unsend</string>
+    <string name="remove">Remove For You </string>
 
 
 </resources>

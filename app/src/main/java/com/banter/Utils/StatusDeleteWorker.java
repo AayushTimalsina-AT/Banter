@@ -32,13 +32,14 @@ public class StatusDeleteWorker extends Worker {
         long twentyFourHoursInMillis = 24 * 60 * 60 * 1000;
 
         DatabaseReference statusRef = FirebaseDatabase.getInstance().getReference().child("Status");
-        Query oldStatusesQuery = statusRef.orderByChild("timeInMillis").endAt(currentTimeInMillis - twentyFourHoursInMillis);
+        Query oldStatusesQuery = statusRef.orderByChild("timestamp").endAt(currentTimeInMillis - twentyFourHoursInMillis);
 
         oldStatusesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot statusSnapshot : snapshot.getChildren()) {
                     statusSnapshot.getRef().removeValue();
+                    StatusDeleteWorker.this.notify();
                 }
             }
 

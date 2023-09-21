@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
@@ -61,7 +62,9 @@ public class SignUpActivity extends AppCompatActivity {
                     binding.etPassword.setError("Enter Your UserName");
                     return;
                 }
-                if(binding.etEmail.getText().toString().isEmpty()){
+
+                String email =binding.etEmail.getText().toString();
+                if(email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()){
                     binding.etEmail.setError("Enter Your Email");
                     return;
                 }

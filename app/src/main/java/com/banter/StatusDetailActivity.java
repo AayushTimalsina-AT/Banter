@@ -37,6 +37,7 @@ public class StatusDetailActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
+        scheduleStatusDeletionTask();
         binding.backArrowId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,7 +79,8 @@ public class StatusDetailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String statusText = binding.editTextStatus.getText().toString();
                 long timeInMillis = System.currentTimeMillis();
-                Status status = new Status(profileImage, username, statusText, timeInMillis);
+                String userId = auth.getCurrentUser().getUid();
+                Status status = new Status(profileImage, username,userId, statusText, timeInMillis);
                 database.getReference().child("Status").push().setValue(status); // Set the status object instead of status1
                 Toast.makeText(StatusDetailActivity.this, "Status Upload Successfully", Toast.LENGTH_SHORT).show();
                 finish();
@@ -88,6 +90,8 @@ public class StatusDetailActivity extends AppCompatActivity {
         // Schedule the periodic task to delete old statuses
 //        scheduleStatusDeletionTask();
     }
+
+
 
     private void scheduleStatusDeletionTask() {
         // Schedule the task to run every 24 hours

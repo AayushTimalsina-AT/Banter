@@ -12,8 +12,6 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 
 import com.banter.Adapters.FragmentsAdapter;
-import com.banter.Adapters.UserAdapter;
-import com.banter.Fragments.ChatFragment;
 import com.banter.databinding.ActivityMainBinding;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -53,13 +51,26 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                return false;
+//                searchView.clearFocus();
+
+//                    ArrayList<Users> filteredUsers = new ArrayList<>();
+//
+//                    for (Users user : userList) {
+//                        if (user.getUserName().toLowerCase().contains(query.toLowerCase())) {
+//                            filteredUsers.add(user);
+//                        }
+//                    }
+//
+//                    // Update the user list in the adapter with filtered data
+//                    userList = filteredUsers;
+////                    notifyDataSetChanged();
+
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-
-                new UserAdapter(ChatFragment.list, MainActivity.this).getFilter().filter(newText);
+//                new UserAdapter(userList, MainActivity.this).getFilter().filter(newText);
                 return true;
 
             }
@@ -73,11 +84,13 @@ public class MainActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.setting) {
             Intent i = new Intent(MainActivity.this, SettingActivity.class);
             startActivity(i);
+            finish();
 
         } else if (item.getItemId() == R.id.logout) {
             auth.signOut();
             Intent intent = new Intent(MainActivity.this, SignInActivity.class);
             startActivity(intent);
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

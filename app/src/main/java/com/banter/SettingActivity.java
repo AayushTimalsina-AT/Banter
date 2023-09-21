@@ -60,7 +60,6 @@ public class SettingActivity extends AppCompatActivity {
                         .child(ID);
                 messageRef.removeValue()
                         .addOnSuccessListener(aVoid -> {
-
                             FirebaseUser user = auth.getCurrentUser();
                             user.delete()
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {

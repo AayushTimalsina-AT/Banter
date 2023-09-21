@@ -4,11 +4,11 @@ public class Messages {
     String uId, Message, MessageId;
     Long timestamp;
 
-    public Messages(String uId, String message, Long timestamp) {
-        this.uId = uId;
-        this.Message = message;
-        this.timestamp = timestamp;
-    }
+//    public Messages(String uId, String message, Long timestamp) {
+//        this.uId = uId;
+//        this.Message = message;
+//        this.timestamp = timestamp;
+//    }
 
     public Messages(String uId, String message) {
         this.uId = uId;
