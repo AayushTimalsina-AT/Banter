@@ -38,7 +38,7 @@ public class StatusFragment extends Fragment {
         binding= FragmentStatusBinding.inflate(inflater, container, false);
         database= FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
-
+        binding.shimmerLayout.startShimmerAnimation();
         StatusAdapter sAdapter = new StatusAdapter(statusList,getContext());
         binding.statusRecyclerView.setAdapter(sAdapter);
 
@@ -58,6 +58,8 @@ public class StatusFragment extends Fragment {
                                 statusList.add(sPost);
 
                             }
+                            binding.shimmerLayout.stopShimmerAnimation();
+                            binding.shimmerLayout.setVisibility(View.INVISIBLE);
                             sAdapter.notifyDataSetChanged();
                         }
             }
