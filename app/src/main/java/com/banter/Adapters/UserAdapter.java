@@ -99,6 +99,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> im
                 intent.putExtra("userId", users.getUserId());
                 intent.putExtra("profilePic", users.getProfilePic());
                 intent.putExtra("userName", users.getUserName());
+                intent.putExtra("FcmToken", users.getFCMToken());
                 context.startActivity(intent);
             }
         });

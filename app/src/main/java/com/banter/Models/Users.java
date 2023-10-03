@@ -1,7 +1,23 @@
 package com.banter.Models;
 
 public class Users {
-    String ProfilePic ,UserName,Email ,Password,UserId,LastMessage,about;
+    String ProfilePic;
+    String UserName;
+    String Email;
+    String Password;
+    String UserId;
+    String LastMessage;
+    String about;
+
+    public String getFCMToken() {
+        return FCMToken;
+    }
+
+    public void setFCMToken(String FCMToken) {
+        this.FCMToken = FCMToken;
+    }
+
+    String FCMToken;
 
 
     public Users(String profilePic, String userName, String email, String password, String userId, String lastMessage) {
@@ -19,6 +35,8 @@ public class Users {
         Email = email;
         Password = password;
     }
+
+
 
     public String getAbout() {
         return about;

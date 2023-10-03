@@ -2,6 +2,7 @@ package com.banter;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,7 +14,14 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.banter.Adapters.FragmentsAdapter;
 import com.banter.databinding.ActivityMainBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.HashMap;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
@@ -38,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
              startActivity(intent);
              finish();
          }
+         getFcmToken();
 
     }
 
@@ -87,10 +96,17 @@ public class MainActivity extends AppCompatActivity {
             finish();
 
         } else if (item.getItemId() == R.id.logout) {
-            auth.signOut();
-            Intent intent = new Intent(MainActivity.this, SignInActivity.class);
-            startActivity(intent);
-            finish();
+            FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()){
+                        auth.signOut();
+                        Intent intent = new Intent(MainActivity.this, SignInActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                }
+            });
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -102,6 +118,23 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
+
+    }
+    void getFcmToken(){
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (task.isSuccessful()){
+                    String token = task.getResult();
+                    Log.d("FCMTOKEN", token);
+                    HashMap<String, Object> obj = new HashMap<>();
+                    obj.put("FCMToken", token);
+                    FirebaseDatabase.getInstance().getReference().child("Users").child(Objects.requireNonNull(auth.getUid()))
+                            .updateChildren(obj);
+                }
+
+            }
+        });
 
     }
 }

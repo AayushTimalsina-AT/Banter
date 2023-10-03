@@ -1,10 +1,13 @@
 package com.banter;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
@@ -15,11 +18,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.banter.Adapters.ChatAdapter;
 import com.banter.Models.Messages;
+import com.banter.Models.Users;
 import com.banter.Utils.EncryptDecryptHelper;
 import com.banter.Utils.GsonUtils;
 import com.banter.databinding.ActivityChatDetailBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,14 +33,25 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class ChatDetailActivity extends AppCompatActivity {
     ActivityChatDetailBinding binding;
     FirebaseDatabase database;
     FirebaseAuth auth;
     Context context;
-
+    String FCMToken ;
     EncryptDecryptHelper encryptDecryptHelper = new EncryptDecryptHelper();
 
 
@@ -50,9 +67,12 @@ public class ChatDetailActivity extends AppCompatActivity {
         binding.send.setEnabled(false);
 
         final String senderId = auth.getUid();
+         FCMToken = getIntent().getStringExtra("FcmToken");
         String receiveId = getIntent().getStringExtra("userId");
         String userName = getIntent().getStringExtra("userName");
         String profilePic = getIntent().getStringExtra("profilePic");
+
+
 
         binding.userName.setText(userName);
         Picasso.get().load(profilePic).placeholder(R.drawable.man).into(binding.profileImage);
@@ -92,7 +112,7 @@ public class ChatDetailActivity extends AppCompatActivity {
                                 Messages model = GsonUtils.convertFromJson(decryptedData, Messages.class);
                                 model.setMessageId(snapshot1.getKey());
                                 messages.add(model);
-//                                 model;
+                                Log.d("MESSAGESTEST", "onDataChange: "+ messages);
 
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -113,7 +133,8 @@ public class ChatDetailActivity extends AppCompatActivity {
         binding.send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String message = binding.btMessage.getText().toString();
+                final String message = binding.btMessage.getText().toString();
+
                 final Messages model = new Messages(senderId, message);
                 model.setTimestamp(System.currentTimeMillis());
                 binding.btMessage.setText("");
@@ -140,6 +161,7 @@ public class ChatDetailActivity extends AppCompatActivity {
                                                 public void onSuccess(Void unused) {
                                                     // Data sent successfully
 //                                                    updateRecentChat( senderRoom,receiverRoom,senderId,model);
+                                                    sendNotification(message);
                                                 }
                                             });
                                 }
@@ -174,7 +196,6 @@ public class ChatDetailActivity extends AppCompatActivity {
             }
         });
     }
-
     private void showPopupMenu(View view) {
         PopupMenu popupMenu = new PopupMenu(ChatDetailActivity.this, view);
         popupMenu.inflate(R.menu.chat_menu); // The menu resource file for the popup menu
@@ -222,33 +243,68 @@ public class ChatDetailActivity extends AppCompatActivity {
                 });
 
     }
-//    private void updateRecentChat(String senderRoom, String receiverRoom, String senderId, Messages model){
-//
-//        // Encryption
-//        try {
-//
-//            // Message store in Database
-//            database.getReference().child("RecentChat")
-//                    .child(senderRoom)
-//                    .setValue(model)
-//                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                        @Override
-//                        public void onSuccess(Void unused) {
-//                            database.getReference().child("RecentChat")
-//                                    .child(receiverRoom)
-//                                    .setValue(model)
-//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                        @Override
-//                                        public void onSuccess(Void unused) {
-//                                            // Data sent successfully
-//                                        }
-//                                    });
-//                        }
-//                    });
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
+    void sendNotification(String message){
+        database.getReference().child("Users")
+                .child(auth.getCurrentUser().getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful()){
+                    Users currentUser = task.getResult().getValue(Users.class);
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+
+
+                        JSONObject NotificationObject = new JSONObject();
+
+                        assert currentUser != null;
+                        NotificationObject.put("title",currentUser.getUserName());
+                        NotificationObject.put("body",message);
+
+                        JSONObject DataObject = new JSONObject();
+                            DataObject.put("receiveId",currentUser.getUserId());
+
+                        jsonObject.put("notification", NotificationObject) ;
+                        jsonObject.put("data",DataObject);
+                        jsonObject.put("to",FCMToken );
+
+                            callApi(jsonObject);
+
+
+                    }catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }
+            }
+        });
+
+
+    }
+     void callApi(JSONObject jsonObject){
+         MediaType JSON = MediaType.get("application/json; charset=utf-8");
+         OkHttpClient client = new OkHttpClient();
+         String url = "https://fcm.googleapis.com/fcm/send";
+         String ServerKey = "AAAAkzNnNwo:APA91bHBkQUKJL5gXJ5_07xKTwYrFPu5nyG1GXrTQgB8ZYq-ye8LG0oqwV5laLh9juci4frOyzJdFYsok3iwTik8jQiFRGKmKocKD_W3NoLjlWeykj26l79zm-DEyh2BxG_7h9rgW6QF";
+         RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+         Request request = new Request.Builder()
+                 .url(url)
+                 .post(body)
+                 .header("Authorization","Bearer "+ ServerKey)
+                 .build();
+         client.newCall(request).enqueue(new Callback() {
+             @Override
+             public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                 Log.d("APICALL", "onFailure: "+ e);
+             }
+
+             @Override
+             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                 Log.d("APICALL", "onResponse: "+response.toString());
+             }
+         });
+
+     }
 
 }
