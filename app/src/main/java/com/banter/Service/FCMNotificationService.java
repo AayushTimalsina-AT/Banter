@@ -1,4 +1,4 @@
-package com.banter;
+package com.banter.Service;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 

@@ -8,6 +8,15 @@ public class Users {
     String UserId;
     String LastMessage;
     String about;
+    String LatestMessageTimestamp;
+
+    public String getLatestMessageTimestamp() {
+        return LatestMessageTimestamp;
+    }
+
+    public void setLatestMessageTimestamp(String latestMessageTimestamp) {
+        LatestMessageTimestamp = latestMessageTimestamp;
+    }
 
     public String getFCMToken() {
         return FCMToken;

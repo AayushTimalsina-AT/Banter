@@ -2,6 +2,7 @@ package com.banter.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +57,6 @@ public class StatusFragment extends Fragment {
                                 Status sPost = dataSnapshot.getValue(Status.class);
                                 sPost.setStatusId(dataSnapshot.getKey());
                                 statusList.add(sPost);
-
                             }
                             binding.shimmerLayout.stopShimmerAnimation();
                             binding.shimmerLayout.setVisibility(View.INVISIBLE);
@@ -66,7 +66,7 @@ public class StatusFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-//                Log.e("StatusFragment", "DatabaseError: " + error.getMessage());
+                Log.d("StatusFragment", "DatabaseError: " + error.getMessage());
             }
         });
         binding.writingStatus.setOnClickListener(new View.OnClickListener() {

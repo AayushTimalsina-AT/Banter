@@ -11,5 +11,5 @@
     <color name="colorPrimary">#27A9E0</color>
     <color name="menu">#076E9A</color>
     <color name="hintColor">#9B9FA1</color>
-
+    <color name="red">#F44336</color>
 </resources>

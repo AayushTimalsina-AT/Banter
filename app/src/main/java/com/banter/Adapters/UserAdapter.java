@@ -1,6 +1,6 @@
-
 package com.banter.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.accessibility.AccessibilityViewCommand;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.banter.ChatDetailActivity;
@@ -32,16 +34,20 @@ import java.util.ArrayList;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> implements Filterable {
 
-    ArrayList<Users> List;
-    private final ArrayList<Users> userListFull;
+    ArrayList<Users> List = new ArrayList<>();
+    private ArrayList<Users> userListFull = new ArrayList<>();
     Context context;
-    Users var;
+    String lmessage;
+
+
     EncryptDecryptHelper encryptDecryptHelper = new EncryptDecryptHelper();
 
     public UserAdapter(ArrayList<Users> list, Context context) {
-        this.List = list;
+        this.List.clear();
+        this.List.addAll(list);
         this.context = context;
-        this.userListFull = new ArrayList<>(list); // Copy the original list
+        this.userListFull.clear();
+        this.userListFull.addAll(list);
     }
 
     @NonNull
@@ -64,11 +70,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> im
                 .orderByChild("timestamp")
                 .limitToLast(1)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.hasChildren()) {
                             for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                                String encryptedData = snapshot1.getValue(String.class);
+                                DataSnapshot lastMessageSnapshot = snapshot.getChildren().iterator().next();
+                                String encryptedData = lastMessageSnapshot.getValue(String.class);
                                 try {
                                     // Decrypt the encrypted data
                                     String decryptedData = encryptDecryptHelper.decrypt(encryptedData);
@@ -76,15 +84,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> im
                                     Messages model = GsonUtils.convertFromJson(decryptedData, Messages.class);
                                     holder.lastMessage.setText(model.getMessage());
                                     holder.time.setText(TimeAgo.using(model.getTimestamp()));
-
+                                    notify();
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-
                             }
                         }
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
 
@@ -104,30 +112,28 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> im
             }
         });
     }
+
     @Override
     public int getItemCount() {
         return List.size();
     }
 
     @Override
-    public  Filter getFilter() {
+    public Filter getFilter() {
         return userFilter;
     }
+
     Filter userFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence keyword) {
             ArrayList<Users> filteredList = new ArrayList<>();
-
             if (keyword.toString().isEmpty()) {
                 // If the search query is empty, show the original list
                 filteredList.addAll(userListFull);
-
             } else {
                 for (Users sUser : userListFull) {
                     if (sUser.getUserName().toString().toLowerCase().contains(keyword.toString().toLowerCase())) {
-
                         filteredList.add(sUser);
-
                     }
                 }
             }
@@ -136,6 +142,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> im
             results.values = filteredList;
             return results;
         }
+
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             List.clear();
@@ -143,7 +150,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> im
             notifyDataSetChanged();
         }
     };
-    public  class ViewHolder extends RecyclerView.ViewHolder {
+
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView profile;
         TextView userName, lastMessage, time;

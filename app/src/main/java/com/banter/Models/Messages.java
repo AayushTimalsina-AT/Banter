@@ -44,7 +44,7 @@ public class Messages {
         Message = message;
     }
 
-    public Long getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 

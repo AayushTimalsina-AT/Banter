@@ -38,8 +38,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingVertical="2dp"
+            android:text="hello"
             android:singleLine="true"
-            android:textColor="#000000" />
+            android:textColor="#000000"/>
     </LinearLayout>
 
     <TextView
