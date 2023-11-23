@@ -32,9 +32,11 @@ public class HelpActivity extends AppCompatActivity {
                 super.onPageFinished(view, url);
             }
         });
-        binding.helpView.loadUrl("https://banters.netlify.app/helps");
         WebSettings webSettings = binding.helpView.getSettings();
-        webSettings.getJavaScriptEnabled();
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setJavaScriptEnabled(true);
+        binding.helpView.loadUrl("https://banters.netlify.app/helps");
+
     }
 
     @Override
