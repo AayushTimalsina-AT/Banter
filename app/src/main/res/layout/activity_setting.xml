@@ -89,6 +89,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/privacyPolicy"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Privacy Policy"
@@ -161,6 +162,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/helps"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Help"
@@ -196,6 +198,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/addFriend"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Invite a Friend"
@@ -231,6 +234,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/deleteAccount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Delete Account"

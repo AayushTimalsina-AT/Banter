@@ -42,16 +42,43 @@ public class SettingActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(SettingActivity.this, profileActivity.class);
                 startActivity(intent);
+                finish();
+            }
+        });
+        binding.privacyPolicy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingActivity.this, PrivacyPolicyActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
         binding.about.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(SettingActivity.this, "You just click the About us.", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(SettingActivity.this, AboutActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
+        binding.helps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingActivity.this, HelpActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        binding.addFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(SettingActivity.this, "You just click the Invite a Friend.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
         String ID = auth.getUid();
-        binding.deleteUser.setOnClickListener(new View.OnClickListener() {
+        binding.deleteAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -83,5 +110,6 @@ public class SettingActivity extends AppCompatActivity {
 
 
     }
+
 
 }
