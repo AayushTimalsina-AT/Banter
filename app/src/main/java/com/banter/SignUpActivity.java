@@ -86,6 +86,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     Toast.makeText(SignUpActivity.this, "User Create Successfully", Toast.LENGTH_SHORT).show();
                                     Intent intent= new Intent(SignUpActivity.this, MainActivity.class);
                                     startActivity(intent);
+                                    finish();
                                 }else{
                                     Toast.makeText(SignUpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
@@ -98,6 +99,7 @@ public class SignUpActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent= new Intent(SignUpActivity.this,SignInActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
         binding.btnGoogle.setOnClickListener(new View.OnClickListener() {

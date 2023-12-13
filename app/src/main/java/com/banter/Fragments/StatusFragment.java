@@ -50,8 +50,8 @@ public class StatusFragment extends Fragment {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        statusList.clear();
                         if (snapshot.exists()) {
-                            statusList.clear();
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 //                                Log.d("STATS-KEY", dataSnapshot.getKey());
                                 Status sPost = dataSnapshot.getValue(Status.class);
@@ -62,6 +62,14 @@ public class StatusFragment extends Fragment {
                             binding.shimmerLayout.setVisibility(View.INVISIBLE);
                             sAdapter.notifyDataSetChanged();
                         }
+                        binding.shimmerLayout.stopShimmerAnimation();
+                        binding.shimmerLayout.setVisibility(View.INVISIBLE);
+                        statusList.clear();
+                        // Add a placeholder status or display a message
+//                        Status placeholderStatus = new Status();
+//                        placeholderStatus.setStatusText("Nothing here");
+//                        statusList.add(placeholderStatus);
+                        sAdapter.notifyDataSetChanged();
             }
 
             @Override
